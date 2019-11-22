@@ -36,7 +36,7 @@ def getUsers():
         d = json.load(f)
         return(d)
 
-@app.route('/user/', methods = ['GET'])
+@app.route('/user/', methods = ['POST'])
 def addUser():
     newId = uuid.uuid4().hex[:6]
 
@@ -56,9 +56,9 @@ def addUser():
         # Add a new record to the JSON
         data["records"].append(newUser)
 
-    writeToFile(data, fileName)
-
-@app.route('/user/<user_id>', methods = ['GET'])
+    writeToFile(fileName, data)
+    return make_response('', 200)
+@app.route('/user/<user_id>', methods = ['DELETE'])
 def deleteUser(user_id):
     data = ''
     fileName = 'data/entries.json'
@@ -73,12 +73,11 @@ def deleteUser(user_id):
     writeToFile(fileName, data)
     return make_response('', 200)
 
-
 def writeToFile(filePath, jsonString):
-    with open(filePath, 'w') as f:
+    with open(filePath, 'w')as f:
         # Write the modified list to file
-        json.dump(jsonString, f, sort_keys=True, indent=4)
-
+       json.dump(jsonString, f, sort_keys=True, indent=4)  
+    
 if __name__ == '__main__':
   # If you mess up your data, re-run the container and it will be restored
   copyfile('data/entries_orig.json', 'data/entries.json')
